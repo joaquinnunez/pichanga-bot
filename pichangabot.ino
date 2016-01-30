@@ -1,14 +1,26 @@
-int ENA=5;//connected to Arduino's port 5(output pwm)
-int IN1=2;//connected to Arduino's port 2
-int IN2=3;//connected to Arduino's port 3
-int ENB=6;//connected to Arduino's port 6(output pwm)
-int IN3=4;//connected to Arduino's port 4
-int IN4=7;//connected to Arduino's port 7
+/*
+* Drives a differential drive robot composed by:
+* - Arduino Nano
+* - L298N Dual H-bridge DC Motor Driver Shield
+* - HC-06 Bluetooth
+*   HC-06 Connections:
+*   BT       Arduino
+*   RX ----> TX
+*   TX ----> RX
+* Tested with an android device and this app https://play.google.com/store/apps/details?id=appinventor.ai_test.BluetoothRC&hl=es_419
+*/
 
-void setup()
-{
+// H Bridge ports
+int ENA = 5; // port 5 (output pwm)
+int IN1 = 2;
+int IN2 = 3;
+int ENB = 6; // port 6 (output pwm)
+int IN3 = 4;
+int IN4 = 7;
+
+void setup() {
  Serial.begin(9600);
- pinMode(ENA, OUTPUT);    //output
+ pinMode(ENA, OUTPUT);
  pinMode(ENB, OUTPUT);
  pinMode(IN1, OUTPUT);
  pinMode(IN2, OUTPUT);
@@ -22,24 +34,25 @@ void setup()
  digitalWrite(IN4, LOW);  // setting motorB's directon
 }
 
-void loop()
-{
-
+void loop() {
   if (Serial.available()) {
     char c = Serial.read();
     Serial.println(c);
     switch(c) {
-      case 'l':
+      case 'L':
         left();
       break;
-      case 'r':
+      case 'R':
         right();
       break;
-      case 'f':
+      case 'F':
         forward();
       break;
-      case 'b':
+      case 'B':
         backward();
+      break;
+      case 'X':
+        stop();
       break;
     }
   }
@@ -79,4 +92,9 @@ void right() {
   digitalWrite(IN4, LOW); //setting motorB's directon
   analogWrite(ENA, 255);  //start driving motorA
   analogWrite(ENB, 255);  //start driving motorB
+}
+
+void stop() {
+  analogWrite(ENA, 0);  //stop driving motorA
+  analogWrite(ENB, 0);  //stop driving motorB
 }
